@@ -23,7 +23,8 @@ To add additional files to the image use the `./stage3/00-install/files` folder 
 Files are added like this: `install -m 644 files/test-file "${ROOTFS_DIR}/home/${FIRST_USER_NAME}/test-file"`  the `01-run.sh` script can be used to execute commands on the rpi os during compilation. Put these commands in the `on_chroot` section.  
   
 To build run: `./build-docker.sh`  
-The image is placed into `./deploy`.
+The image is placed into `./deploy`.  
+The build process takes about 20 minutes.
   
 ### Cleanup
 `yes | docker system prune -a`  
