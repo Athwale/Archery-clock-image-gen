@@ -30,7 +30,19 @@ The image is placed into `./deploy`.
 `rm -rf deploy`
  
 ## Test in virtual machine
+### Install qemu for arm
+`sudo dnf install @virtualization qemu-system-arm`
 
+### Run the image
+`mkdir virtual-pi && cd virtual-pi`  
+`git clone https://github.com/dhruvvyas90/qemu-rpi-kernel`  
+Unzip the image from deploy into the virtual-pi directory.  
+`mv ./*ARCLOCK*.img arclockos.img`  
+`virt-install --name arclockos --arch armv6l --machine versatilepb --cpu arm1176 --vcpus 1 --memory 256 --import --disk arclockos.img,format=raw,bus=virtio --network bridge,source=virbr0,model=virtio --video vga --graphics spice --boot 'dtb=qemu-rpi-kernel/versatile-pb-buster.dtb,kernel=qemu-rpi-kernel/kernel-qemu-4.19.50-buster,kernel_args=root=/dev/vda2 panic=1' --events on_reboot=destroy`  
+
+### Cleanup
+`virsh list --all`  
+`virsh undefine --domain arclockos`
 
 ## Modifications
 binfmt test in `scripts/dependencies_check` is disabled. This test failing is probably a bug.  

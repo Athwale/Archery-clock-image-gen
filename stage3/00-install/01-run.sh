@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 # Commands to run as root on the pi system to prepare environment.
+# This is just an example
 on_chroot << EOF
     systemctl disable wpa_supplicant
 EOF
