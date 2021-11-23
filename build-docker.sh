@@ -20,6 +20,11 @@ if [ -f "${DIR}/config" ]; then
 	CONFIG_FILE="${DIR}/config"
 fi
 
+if grep -q 'PASS.*raspberry' ${CONFIG_FILE}; then
+    echo "error, default password: raspberry in config file"
+    exit 1
+fi
+
 while getopts "c:" flag
 do
 	case "${flag}" in
