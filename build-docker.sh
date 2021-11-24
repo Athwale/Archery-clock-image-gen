@@ -124,6 +124,7 @@ fi
 
 echo "copying results from deploy/"
 ${DOCKER} cp "${CONTAINER_NAME}":/pi-gen/deploy .
+unzip ./deploy/image_*-lite.zip -d ./deploy
 ls -lah deploy
 
 # cleanup
