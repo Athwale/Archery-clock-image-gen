@@ -1,6 +1,7 @@
 deploy/*
 work/*
 postrun.sh
+password.txt
 .pc
 *-pc
 apt-cacher-ng/

@@ -1,4 +1,4 @@
 IMG_NAME="ARCLOCK"
-FIRST_USER_PASS="raspberry"
+FIRST_USER_PASS="XREPLACEX"
 ENABLE_SSH=0
 STAGE_LIST="stage0 stage1 stage2 stage-custom"

@@ -6,6 +6,11 @@ BUILD_OPTS="$*"
 
 DOCKER="docker"
 
+if ! groups | grep -q "${DOCKER}"; then
+    echo 'You are not in docker group, use newgrp docker'
+    exit 1
+fi
+
 if ! ${DOCKER} ps >/dev/null 2>&1; then
 	DOCKER="sudo docker"
 fi
@@ -20,8 +25,46 @@ if [ -f "${DIR}/config" ]; then
 	CONFIG_FILE="${DIR}/config"
 fi
 
-if grep -q 'PASS.*raspberry' ${CONFIG_FILE}; then
-    echo "error, default password: raspberry in config file"
+# Generate a password.
+# Select a separator.
+TOP=4
+CHOICE=$RANDOM
+let "CHOICE %= $TOP"
+SEPARATOR=''
+COUNTER=0
+for i in '-' '+' '_' ' '; do
+    SEPARATOR="$i"
+    if test $COUNTER -eq $CHOICE; then
+        break
+    fi
+    COUNTER=$((COUNTER+1))
+done
+
+# Select a few words joined with the separator.
+LENGTH=12
+TOP=$(wc -l ./pwgen/words | awk '{ print $1 }')
+LINE=$RANDOM
+let "LINE %= $TOP"
+PASSWORD=$(head -n ${LINE} ./pwgen/words | tail -n 1)
+
+while test ${#PASSWORD} -le ${LENGTH}; do 
+    LINE=$RANDOM
+    let "LINE %= $TOP"
+    LINE=$(head -n ${LINE} ./pwgen/words | tail -n 1)
+    PASSWORD="${PASSWORD}${SEPARATOR}${LINE}"
+done
+
+# Add a few numbers.
+TOP=9999
+NUMBER=$RANDOM
+let "NUMBER %= $TOP"
+PASSWORD="${PASSWORD}${NUMBER}"
+
+echo ${PASSWORD}>password.txt
+sed -i "s/XREPLACEX/${PASSWORD}/" ${CONFIG_FILE}
+
+if grep -q 'PASS.*XREPLACEX' ${CONFIG_FILE}; then
+    echo "error, default password: in config file"
     exit 1
 fi
 
@@ -131,5 +174,8 @@ ls -lah deploy
 if [ "${PRESERVE_CONTAINER}" != "1" ]; then
 	${DOCKER} rm -v "${CONTAINER_NAME}"
 fi
+# Return password to original replace string for next run.
+sed -i 's/FIRST_USER_PASS.*/FIRST_USER_PASS="XREPLACEX"/' ${CONFIG_FILE}
 
+echo "Password: ${PASSWORD}"
 echo "Done! Your image(s) should be in deploy/"
