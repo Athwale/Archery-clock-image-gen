@@ -18,6 +18,7 @@ newgrp docker
 
 ### Configure and build image
 Basic settings are in `config` file. See [upstream](https://github.com/RPi-Distro/pi-gen) for additional configuration options.  
+If the config file contains `FIRST_USER_PASS="XREPLACEX"` a random password will be generated and saved into `password.txt`  
 Additional package installation is configured in `./stage-custom/00-install/00-packages`  
 To add additional files to the image use the `./stage-custom/00-install/files` folder and the `./stage-custom/00-install/01-run.sh` script.  
 Files are added like this: `install -m 644 files/test-file "${ROOTFS_DIR}/home/${FIRST_USER_NAME}/test-file"` the `01-run.sh` script can be used to execute commands on the rpi os during compilation. Put these commands in the `on_chroot` section.  
